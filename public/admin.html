@@ -6,47 +6,13 @@
   <meta name="robots" content="noindex">
   <title>Админка ISMA</title>
   <meta name="theme-color" content="#206a75">
-  <script>try { var th = localStorage.getItem("theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}</script>
+  <script src="theme.js"></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23206a75'/><text x='50' y='70' font-size='60' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>I</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    .tabs { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
-    .tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
-    .row > div { flex: 1 1 140px; }
-    .radio { display: flex; gap: 16px; margin: 4px 0 8px; }
-    .radio label, .check { display: flex; align-items: center; gap: 6px; font-weight: 500; margin: 0; }
-    .check { margin-top: 12px; }
-    input[type="radio"], input[type="checkbox"] { accent-color: var(--accent); }
-    .result { margin-top: 16px; padding: 14px; border-radius: 12px; background: var(--accent-soft); }
-    .result strong.code { font-size: 22px; letter-spacing: .15em; color: var(--accent); }
-    .codes { columns: 3 140px; font-variant-numeric: tabular-nums; font-size: 14px; margin: 10px 0; }
-    .codes div { break-inside: avoid; }
-    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; max-height: 240px; overflow: auto; }
-    .chips span { background: var(--surface-2); border-radius: 6px; padding: 2px 8px; font-size: 13px; }
-    .muted { color: var(--muted); }
-    .hero .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-    .hero a { color: #fff; }
-    .hero .btn { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff; }
-
-    #print-area { display: none; }
-    @media print {
-      body { background: #fff; color: #000; }
-      .wrap, dialog, .toast { display: none !important; }
-      #print-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
-      .slip {
-        border: 1px dashed #999; padding: 10px 12px; font-size: 10.5px; line-height: 1.35;
-        break-inside: avoid; color: #000;
-      }
-      .slip .brand { font-weight: 800; letter-spacing: .15em; color: #206a75; }
-      .slip .apt { font-size: 14px; font-weight: 700; margin-top: 2px; }
-      .slip .code { font-size: 18px; font-weight: 700; letter-spacing: .15em; margin: 2px 0 4px; color: #206a75; }
-      @page { margin: 10mm; }
-    }
-  </style>
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
   <div class="wrap">
@@ -88,6 +54,7 @@
       <div class="tabs" role="tablist">
         <button class="btn" role="tab" data-tab="bookings" aria-selected="true" data-i18n="tabBookings"></button>
         <button class="btn" role="tab" data-tab="apartments" aria-selected="false" data-i18n="tabApartments"></button>
+        <button class="btn" role="tab" data-tab="settings" aria-selected="false" data-i18n="tabSettings"></button>
       </div>
 
       <!-- Брони -->
@@ -99,15 +66,16 @@
             <button class="icon-btn" id="next" data-i18n-aria="nextMonth">›</button>
           </div>
           <ul class="list" id="bookings"></ul>
+          <div class="actions start"><button class="btn small" id="export" type="button" data-i18n="exportBookings"></button></div>
         </section>
 
         <section class="card">
           <h3 data-i18n="adminBookTitle"></h3>
-          <p class="hint" style="margin-top:-6px" data-i18n="adminBookHint"></p>
+          <p class="hint sub-hint" data-i18n="adminBookHint"></p>
           <form id="admin-book" class="row">
             <div><label for="ab-apt" data-i18n="apartment"></label><input type="text" id="ab-apt" required></div>
             <div><label for="ab-date" data-i18n="date"></label><input type="date" id="ab-date" required></div>
-            <div style="flex:0 0 auto"><button class="btn primary" type="submit" data-i18n="bookBtn"></button></div>
+            <div class="fit"><button class="btn primary" type="submit" data-i18n="bookBtn"></button></div>
           </form>
           <div class="error" id="ab-error" hidden></div>
         </section>
@@ -146,16 +114,42 @@
 
         <section class="card">
           <h3 data-i18n="oneTitle"></h3>
-          <p class="hint" style="margin-top:-6px" data-i18n="oneHint"></p>
+          <p class="hint sub-hint" data-i18n="oneHint"></p>
           <form id="one-form" class="row">
             <div><label for="one-apt" data-i18n="apartment"></label><input type="text" id="one-apt" required></div>
-            <div style="flex:0 0 auto" class="row">
+            <div class="fit row">
               <button class="btn primary" type="submit" data-action="regenerate" data-i18n="newCode"></button>
               <button class="btn danger" type="submit" data-action="delete" data-i18n="delete"></button>
             </div>
           </form>
           <div class="error" id="one-error" hidden></div>
           <div class="result" id="one-result" hidden></div>
+        </section>
+      </div>
+
+      <!-- Настройки -->
+      <div data-panel="settings" hidden>
+        <section class="card">
+          <form id="settings-form">
+            <label for="s-wa" data-i18n="waLabel"></label>
+            <input type="text" id="s-wa" inputmode="tel" autocomplete="off" placeholder="+7 701 123 45 67">
+            <p class="hint" data-i18n="waHint"></p>
+
+            <label for="s-hours" data-i18n="cancelHoursLabel"></label>
+            <input type="number" id="s-hours" min="0" max="168" step="1" class="short">
+            <p class="hint" data-i18n="cancelHoursHint"></p>
+
+            <label for="s-rules-ru" data-i18n="rulesRu"></label>
+            <textarea id="s-rules-ru"></textarea>
+            <label for="s-rules-kk" data-i18n="rulesKk"></label>
+            <textarea id="s-rules-kk"></textarea>
+            <label for="s-rules-en" data-i18n="rulesEn"></label>
+            <textarea id="s-rules-en"></textarea>
+            <p class="hint" data-i18n="rulesHint"></p>
+
+            <div class="error" id="settings-error" hidden></div>
+            <div class="actions start"><button class="btn primary" type="submit" data-i18n="save"></button></div>
+          </form>
         </section>
       </div>
     </div>

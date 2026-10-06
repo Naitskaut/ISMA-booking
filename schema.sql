@@ -20,5 +20,12 @@ CREATE INDEX IF NOT EXISTS bookings_month ON bookings(month);
 CREATE TABLE IF NOT EXISTS attempts (
   key          TEXT PRIMARY KEY,        -- "apt:45" или "admin:<ip>"
   failures     INTEGER NOT NULL DEFAULT 0,
-  locked_until INTEGER NOT NULL DEFAULT 0  -- unix-время в секундах
+  locked_until INTEGER NOT NULL DEFAULT 0, -- unix-время в секундах
+  last_failure INTEGER NOT NULL DEFAULT 0  -- время последней ошибки
+);
+
+-- Настройки из админки: контакт, правила, срок отмены (значения в JSON)
+CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT NOT NULL
 );

@@ -1,4 +1,7 @@
-import { api, el, longDate, monthCells, monthName, monthTitle, setupChrome, shiftMonth, store, t, toast } from "./common.js";
+import {
+  api, cancelDeadline, el, longDate, monthCells, monthName, monthTitle, rulesFor, setupChrome, shiftMonth, store, t,
+  toast, whatsappUrl,
+} from "./common.js";
 import { onLangChange } from "./i18n.js";
 
 const MONTHS_BACK = 12; // насколько далеко можно листать историю
@@ -69,6 +72,19 @@ function render() {
         el("span", { class: "date" }, longDate(b.date)),
         el("span", { class: "apt" }, t("aptShort", { apt: b.apartment }))))
     : [el("li", {}, el("span", { class: "empty-note" }, t("noBookings")))]));
+
+  renderSettings(state.settings);
+}
+
+// Правила и кнопка WhatsApp показываются, только если админ их заполнил
+function renderSettings(settings) {
+  const rules = rulesFor(settings);
+  document.getElementById("rules").hidden = rules.length === 0;
+  document.getElementById("rules-list").replaceChildren(...rules.map((r) => el("li", {}, r)));
+
+  const phone = settings?.whatsapp;
+  document.getElementById("help").hidden = !phone;
+  if (phone) document.getElementById("wa-link").href = whatsappUrl(phone);
 }
 
 function openDay(date, apt) {
@@ -152,10 +168,27 @@ function openBooked(date, apt) {
   dlgBody.replaceChildren(
     el("h3", {}, t("takenTitle", { apt })),
     el("p", { class: "sub" }, longDate(date)),
-    el("details", {}, el("summary", {}, t("yourBooking")), form),
+    el("details", {}, el("summary", {}, t("yourBooking")), ...cancelContent(date, form)),
     el("div", { class: "actions" },
       el("button", { class: "btn", type: "button", onclick: () => dlg.close() }, t("close"))),
   );
 }
 
 load();
+
+// Пока срок не вышел — подсказка «можно до …» и форма; после — просьба написать администратору
+function cancelContent(date, form) {
+  const hours = state.settings?.cancelHours || 0;
+  if (!hours) return [form];
+  const [y, m, d] = date.split("-").map(Number);
+  const closesAt = Date.UTC(y, m - 1, d) - ((state.tzOffset ?? 5) + hours) * 3600_000;
+  if (Date.now() <= closesAt) {
+    return [el("p", { class: "note" }, t("cancelUntil", { when: cancelDeadline(date, hours) })), form];
+  }
+  const phone = state.settings?.whatsapp;
+  return [
+    el("p", { class: "note" }, t("cancelClosed", { hours })),
+    phone ? el("a", { class: "wa-link", href: whatsappUrl(phone), target: "_blank", rel: "noopener noreferrer" },
+      document.querySelector("#wa-link svg").cloneNode(true), el("span", {}, t("contactAdmin"))) : null,
+  ];
+}

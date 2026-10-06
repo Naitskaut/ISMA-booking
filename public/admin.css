@@ -1,0 +1,38 @@
+.tabs { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
+.tabs .btn { padding: 8px 12px; font-size: 14px; }
+.tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+.row > div { flex: 1 1 140px; }
+.radio { display: flex; gap: 16px; margin: 4px 0 8px; }
+.radio label, .check { display: flex; align-items: center; gap: 6px; font-weight: 500; margin: 0; }
+.check { margin-top: 12px; }
+input[type="radio"], input[type="checkbox"] { accent-color: var(--accent); }
+.result { margin-top: 16px; padding: 14px; border-radius: 12px; background: var(--accent-soft); }
+.result strong.code { font-size: 22px; letter-spacing: .15em; color: var(--accent); }
+.codes { columns: 3 140px; font-variant-numeric: tabular-nums; font-size: 14px; margin: 10px 0; }
+.codes div { break-inside: avoid; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; max-height: 240px; overflow: auto; }
+.chips span { background: var(--surface-2); border-radius: 6px; padding: 2px 8px; font-size: 13px; }
+.muted { color: var(--muted); }
+.hero .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.hero a { color: #fff; }
+.hero .btn { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff; }
+
+#print-area { display: none; }
+@media print {
+  body { background: #fff; color: #000; }
+  .wrap, dialog, .toast { display: none !important; }
+  #print-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .slip {
+    border: 1px dashed #999; padding: 10px 12px; font-size: 10.5px; line-height: 1.35;
+    break-inside: avoid; color: #000;
+  }
+  .slip .brand { font-weight: 800; letter-spacing: .15em; color: #206a75; }
+  .slip .apt { font-size: 14px; font-weight: 700; margin-top: 2px; }
+  .slip .code { font-size: 18px; font-weight: 700; letter-spacing: .15em; margin: 2px 0 4px; color: #206a75; }
+  @page { margin: 10mm; }
+}
+
+.sub-hint { margin-top: -6px; }
+.row > .fit { flex: 0 0 auto; }
+.short { max-width: 140px; }

@@ -56,6 +56,7 @@ async function login() {
     $("logout").hidden = false;
     $("apt-count").textContent = res.apartments;
     await loadBookings();
+    fillSettings(state.settings);
   } catch (err) {
     showError("login-error", err);
   }
@@ -125,6 +126,45 @@ $("admin-book").addEventListener("submit", async (e) => {
   }
 });
 
+$("export").addEventListener("click", async () => {
+  try {
+    const { bookings } = await adminApi("/api/admin/export");
+    downloadFile(`isma-bookings-${new Date().toISOString().slice(0, 10)}.csv`,
+      [t("exportHeader"), ...bookings.map((b) => `${b.date};${b.apartment};${b.created_at}`)]);
+  } catch (err) {
+    toast(err.message);
+  }
+});
+
+// ---------- Настройки ----------
+
+function fillSettings(settings) {
+  $("s-wa").value = settings.whatsapp ? `+${settings.whatsapp}` : "";
+  $("s-hours").value = settings.cancelHours;
+  for (const lang of ["ru", "kk", "en"]) $(`s-rules-${lang}`).value = settings.rules[lang] || "";
+}
+
+$("settings-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  showError("settings-error", null);
+  const btn = e.submitter;
+  btn.disabled = true;
+  try {
+    const res = await adminApi("/api/admin/settings", {
+      whatsapp: $("s-wa").value,
+      cancelHours: Number($("s-hours").value || 0),
+      rules: { ru: $("s-rules-ru").value, kk: $("s-rules-kk").value, en: $("s-rules-en").value },
+    });
+    state.settings = res.settings;
+    fillSettings(res.settings);
+    toast(t("saved"));
+  } catch (err) {
+    showError("settings-error", err);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
 // ---------- Квартиры ----------
 
 async function loadApartments() {
@@ -154,7 +194,7 @@ function collectLabels() {
   if (!Number.isInteger(from) || !Number.isInteger(to) || from < 1 || to < from) {
     throw new Error(tErr("bad_range"));
   }
-  if (to - from >= 2000) throw new Error(tErr("too_many", { max: 2000 }));
+  if (to - from >= 1000) throw new Error(tErr("too_many", { max: 1000 }));
   const prefix = $("r-prefix").value.trim();
   return Array.from({ length: to - from + 1 }, (_, i) => `${prefix}${from + i}`);
 }
@@ -205,9 +245,9 @@ function renderCodes(id, created, skipped) {
   const PREVIEW = 30;
   $(id).replaceChildren(...[
     created.length === 1
-      ? el("p", { style: "margin:0" }, t("oneCode", { apt: created[0].apartment }), " ",
+      ? el("p", { class: "flush" }, t("oneCode", { apt: created[0].apartment }), " ",
           el("strong", { class: "code" }, created[0].code))
-      : el("p", { style: "margin:0" }, el("strong", {}, t("createdCount", { n: created.length }))),
+      : el("p", { class: "flush" }, el("strong", {}, t("createdCount", { n: created.length }))),
     skipped.length ? el("p", { class: "hint" }, t("skipped", { n: skipped.length })) : null,
     created.length > 1
       ? el("div", { class: "codes" }, created.slice(0, PREVIEW).map((c) => el("div", {}, `${c.apartment} — ${c.code}`)),
@@ -215,7 +255,7 @@ function renderCodes(id, created, skipped) {
       : null,
     created.length ? el("p", { class: "hint" }, t("codesOnce")) : null,
     created.length
-      ? el("div", { class: "actions", style: "justify-content:flex-start" },
+      ? el("div", { class: "actions start" },
           el("button", { class: "btn primary", onclick: () => printSlips(created) }, t("printSlips")),
           el("button", { class: "btn", onclick: () => downloadCsv(created) }, t("downloadCsv")))
       : null,
@@ -224,9 +264,15 @@ function renderCodes(id, created, skipped) {
 }
 
 function downloadCsv(rows) {
-  const csv = "﻿" + t("csvHeader") + "\r\n" + rows.map((r) => `${r.apartment};${r.code}`).join("\r\n");
+  downloadFile(`isma-codes-${new Date().toISOString().slice(0, 10)}.csv`,
+    [t("csvHeader"), ...rows.map((r) => `${r.apartment};${r.code}`)]);
+}
+
+// CSV с BOM и «;», чтобы Excel сразу открыл кириллицу по столбцам
+function downloadFile(name, lines) {
+  const csv = "﻿" + lines.join("\r\n");
   const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-  const a = el("a", { href: url, download: `isma-codes-${new Date().toISOString().slice(0, 10)}.csv` });
+  const a = el("a", { href: url, download: name });
   document.body.append(a);
   a.click();
   a.remove();

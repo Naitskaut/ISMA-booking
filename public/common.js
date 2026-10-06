@@ -105,7 +105,7 @@ export function confirmDialog(text, okLabel = t("confirmOk")) {
     const dlg = el("dialog", {});
     const done = (v) => { dlg.close(); dlg.remove(); resolve(v); };
     dlg.append(el("div", { class: "dlg" },
-      el("p", { style: "margin:0;font-weight:600" }, text),
+      el("p", { class: "question" }, text),
       el("div", { class: "actions" },
         el("button", { class: "btn", type: "button", onclick: () => done(false) }, t("confirmNo")),
         el("button", { class: "btn primary", type: "button", onclick: () => done(true) }, okLabel))));
@@ -113,4 +113,27 @@ export function confirmDialog(text, okLabel = t("confirmOk")) {
     document.body.append(dlg);
     dlg.showModal();
   });
+}
+
+// Правила на текущем языке; если он не заполнен — первый заполненный из остальных
+export function rulesFor(settings, lang = getLang()) {
+  const rules = settings?.rules || {};
+  const text = [lang, "ru", "kk", "en"].map((l) => rules[l]).find((r) => r && r.trim());
+  if (!text) return [];
+  return text.split(/\r?\n/)
+    .map((line) => line.trim().replace(/^([-–—•*]|\d+[.)])\s*/, ""))
+    .filter(Boolean);
+}
+
+// Время, до которого житель может сам отменить бронь (местное время), или null
+export function cancelDeadline(date, hours) {
+  if (!hours) return null;
+  const [y, m, d] = date.split("-").map(Number);
+  const t0 = new Date(Date.UTC(y, m - 1, d) - hours * 3600_000);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(t0.getUTCDate())}.${pad(t0.getUTCMonth() + 1)} ${pad(t0.getUTCHours())}:00`;
+}
+
+export function whatsappUrl(phone) {
+  return `https://wa.me/${phone}?text=${encodeURIComponent(t("waText"))}`;
 }
