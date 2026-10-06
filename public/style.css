@@ -92,6 +92,11 @@ a { color: var(--accent); }
 /* ---------- Верхняя панель ---------- */
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0 16px; }
 .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+.logo-mark::before {
+  content: ""; width: 24px; height: 24px; background: #fff;
+  -webkit-mask: url("logo.svg") center / contain no-repeat;
+  mask: url("logo.svg") center / contain no-repeat;
+}
 .logo-mark {
   width: 36px; height: 36px; border-radius: 10px; background: var(--hero);
   display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 17px;
@@ -276,3 +281,21 @@ input.code::placeholder { text-transform: none; letter-spacing: normal; font-wei
 .wa-link svg { width: 20px; height: 20px; flex: none; color: #25d366; }
 @media (max-width: 480px) { .help .wa-link { width: 100%; } }
 .dlg .wa-link { margin-top: 10px; }
+
+/* ---------- Анимация смены темы ---------- */
+/* Новая тема расходится кругом от кнопки; центр и радиус (--vt-*) задаёт common.js */
+::view-transition-old(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: theme-reveal .7s cubic-bezier(.55, 0, .25, 1) both;
+}
+@keyframes theme-reveal {
+  from { clip-path: circle(0 at var(--vt-x, 100%) var(--vt-y, 0)); }
+  to { clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 100%) var(--vt-y, 0)); }
+}
+.theme-switching *, .theme-switching *::before, .theme-switching *::after { transition: none !important; }
+#theme-toggle .sun, #theme-toggle .moon { animation: theme-icon-in .5s cubic-bezier(.4, 0, .2, 1); }
+@keyframes theme-icon-in { from { transform: rotate(-90deg) scale(.6); } }
+@media (prefers-reduced-motion: reduce) {
+  #theme-toggle .sun, #theme-toggle .moon { animation: none; }
+}

@@ -89,10 +89,33 @@ function currentTheme() {
 export function setupChrome() {
   document.querySelectorAll("[data-lang]").forEach((b) =>
     b.addEventListener("click", () => setLang(b.dataset.lang)));
-  document.getElementById("theme-toggle")?.addEventListener("click", () => {
+  const toggle = document.getElementById("theme-toggle");
+  toggle?.addEventListener("click", () => {
     const next = currentTheme() === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    store.set("theme", next);
+    const apply = () => {
+      document.documentElement.dataset.theme = next;
+      store.set("theme", next);
+    };
+    // Новая тема расходится кругом от кнопки; без поддержки браузера или при «меньше движения» — сразу
+    if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      apply();
+      return;
+    }
+    const r = toggle.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    // Круг описан в CSS (@keyframes theme-reveal), здесь только его центр и радиус —
+    // так новая тема с первого кадра видна лишь внутри круга, без вспышки
+    const root = document.documentElement;
+    root.style.setProperty("--vt-x", `${x}px`);
+    root.style.setProperty("--vt-y", `${y}px`);
+    root.style.setProperty("--vt-r", `${radius}px`);
+    // Остальные CSS-переходы на это время выключены, иначе рамки догоняют новую тему с опозданием
+    root.classList.add("theme-switching");
+    const transition = document.startViewTransition(apply);
+    // Браузер может прервать анимацию (например, вкладка скрыта) — тема всё равно применится
+    transition.ready.catch(() => {});
+    transition.finished.catch(() => {}).finally(() => root.classList.remove("theme-switching"));
   });
   applyStatic();
 }
