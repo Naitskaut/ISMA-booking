@@ -1,0 +1,405 @@
+// Переводы: русский, казахский, английский.
+// Статичный текст размечается атрибутами data-i18n / data-i18n-ph / data-i18n-aria,
+// динамичный берётся через t("ключ", { параметры }).
+
+const DICT = {
+  ru: {
+    confirmOk: "Да, продолжить",
+    confirmNo: "Отмена",
+    langName: "Рус",
+    months: ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"],
+    monthsGen: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
+    weekdays: ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"],
+    weekdaysShort: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+
+    title: "Комната для мероприятий",
+    complex: "ЖК ISMA",
+    hint: "Нажмите на свободный день, чтобы забронировать.",
+    rule1: "Бронь на целый день",
+    rule2: "Одна квартира — один раз в месяц",
+    rule3: "На текущий и следующий месяц",
+    legendFree: "Свободно",
+    legendTaken: "Занято",
+    legendToday: "Сегодня",
+    free: "свободно",
+    aptShort: "кв. {apt}",
+    bookingsOf: "Брони · {month}",
+    noBookings: "Пока никто не забронировал",
+    prevMonth: "Предыдущий месяц",
+    nextMonth: "Следующий месяц",
+    ariaFree: "{date}: свободно",
+    ariaTaken: "{date}: занято, квартира {apt}",
+    themeToggle: "Сменить тему",
+    language: "Язык",
+
+    bookTitle: "Забронировать",
+    aptLabel: "Номер квартиры",
+    aptPh: "например, 45",
+    codeLabel: "Код квартиры",
+    codePh: "6 символов",
+    codeHint: "Код выдаёт администратор дома, по одному на квартиру.",
+    close: "Закрыть",
+    bookBtn: "Забронировать",
+    bookedOk: "Готово! {date} — за квартирой {apt}",
+    takenTitle: "Занято — кв. {apt}",
+    yourBooking: "Это ваша бронь? Отменить",
+    codeFor: "Код квартиры {apt}",
+    cancelBtn: "Отменить бронь",
+    cancelled: "Бронь на {date} отменена",
+
+    err: {
+      wrong_code: "Неверный номер квартиры или код",
+      day_taken: "Этот день уже занят (кв. {apt})",
+      month_taken: "У квартиры {apt} уже есть бронь в этом месяце: {date}. Можно бронировать один раз в месяц.",
+      race: "Этот день только что заняли. Обновите страницу.",
+      past_day: "Нельзя бронировать прошедший день",
+      too_far: "Бронировать можно до {date}",
+      past_cancel: "Прошедшую бронь отменить нельзя",
+      no_own_booking: "На эту дату нет брони вашей квартиры",
+      no_booking: "На эту дату нет брони",
+      locked: "Слишком много неверных попыток. Попробуйте через {minutes} мин.",
+      invalid_apt: "Неверный номер квартиры",
+      invalid_date: "Неверная дата",
+      invalid_month: "Неверный месяц",
+      wrong_password: "Неверный пароль",
+      admin_disabled: "Пароль админа не задан на сервере (ADMIN_PASSWORD)",
+      empty_list: "Список квартир пуст",
+      too_many: "Не больше {max} квартир за раз",
+      bad_range: "Проверьте диапазон номеров",
+      apt_not_found: "Квартира {apt} не найдена",
+      network: "Нет связи с сервером, попробуйте ещё раз",
+    },
+
+    // Админка
+    adminTitle: "Админка",
+    backToCalendar: "← Календарь для жителей",
+    logout: "Выйти",
+    passwordLabel: "Пароль администратора",
+    login: "Войти",
+    tabBookings: "Брони",
+    tabApartments: "Квартиры и коды",
+    adminCancel: "Отменить",
+    noBookingsMonth: "В этом месяце броней нет",
+    confirmCancel: "Отменить бронь кв. {apt} на {date}?",
+    cancelledShort: "Бронь отменена",
+    adminBookTitle: "Забронировать за квартиру",
+    adminBookHint: "Если житель не может сделать это сам. Правила те же: день свободен, в этом месяце у квартиры нет брони.",
+    apartment: "Квартира",
+    date: "Дата",
+    adminBooked: "Забронировано: кв. {apt}, {date}",
+    aptCount: "Квартиры в системе:",
+    showList: "Показать список",
+    addTitle: "Добавить квартиры и выдать коды",
+    modeRange: "Диапазоном",
+    modeList: "Списком",
+    from: "С номера",
+    to: "По номер",
+    prefix: "Приставка (необяз.)",
+    prefixPh: "например, 2-",
+    rangeHint: "Если номера квартир повторяются в разных блоках, добавляйте блоки по очереди с приставкой: «1-», «2-»…",
+    listLabel: "Номера квартир, по одному в строке или через запятую",
+    overwrite: "Выдать новые коды и тем, кто уже есть (старые коды перестанут работать)",
+    createCodes: "Создать коды",
+    confirmOverwrite: "Старые коды этих квартир перестанут работать. Продолжить?",
+    oneTitle: "Одна квартира",
+    oneHint: "Код потерялся или стал известен посторонним — выдайте новый, старый перестанет работать.",
+    newCode: "Новый код",
+    delete: "Удалить",
+    confirmDelete: "Удалить квартиру {apt} и все её брони?",
+    deleted: "Квартира {apt} удалена",
+    oneCode: "Квартира {apt}:",
+    createdCount: "Создано кодов: {n}",
+    skipped: "Пропущено (уже были в системе): {n}. Чтобы выдать им новые коды, отметьте галочку.",
+    andMore: "… и ещё {n}",
+    codesOnce: "Коды показываются только сейчас — сохраните файл или распечатайте карточки. Потом можно только выдать новые.",
+    printSlips: "Печать карточек",
+    downloadCsv: "Скачать таблицу (CSV)",
+    csvHeader: "Квартира;Код",
+  },
+
+  kk: {
+    confirmOk: "Иә, жалғастыру",
+    confirmNo: "Болдырмау",
+    langName: "Қаз",
+    months: ["қаңтар", "ақпан", "наурыз", "сәуір", "мамыр", "маусым", "шілде", "тамыз", "қыркүйек", "қазан", "қараша", "желтоқсан"],
+    monthsGen: ["қаңтар", "ақпан", "наурыз", "сәуір", "мамыр", "маусым", "шілде", "тамыз", "қыркүйек", "қазан", "қараша", "желтоқсан"],
+    weekdays: ["жексенбі", "дүйсенбі", "сейсенбі", "сәрсенбі", "бейсенбі", "жұма", "сенбі"],
+    weekdaysShort: ["Дс", "Сс", "Ср", "Бс", "Жм", "Сб", "Жс"],
+
+    title: "Іс-шараларға арналған бөлме",
+    complex: "ISMA ТҮК",
+    hint: "Брондау үшін бос күнді басыңыз.",
+    rule1: "Толық күнге брондау",
+    rule2: "Бір пәтер — айына бір рет",
+    rule3: "Ағымдағы және келесі айға",
+    legendFree: "Бос",
+    legendTaken: "Бос емес",
+    legendToday: "Бүгін",
+    free: "бос",
+    aptShort: "пәт. {apt}",
+    bookingsOf: "Брондар · {month}",
+    noBookings: "Әзірге ешкім брондамаған",
+    prevMonth: "Алдыңғы ай",
+    nextMonth: "Келесі ай",
+    ariaFree: "{date}: бос",
+    ariaTaken: "{date}: бос емес, {apt} пәтер",
+    themeToggle: "Тақырыпты ауыстыру",
+    language: "Тіл",
+
+    bookTitle: "Брондау",
+    aptLabel: "Пәтер нөмірі",
+    aptPh: "мысалы, 45",
+    codeLabel: "Пәтер коды",
+    codePh: "6 таңба",
+    codeHint: "Кодты үй әкімшісі береді, әр пәтерге біреуден.",
+    close: "Жабу",
+    bookBtn: "Брондау",
+    bookedOk: "Дайын! {date} — {apt} пәтерге брондалды",
+    takenTitle: "Бос емес — {apt} пәтер",
+    yourBooking: "Бұл сіздің броныңыз ба? Жою",
+    codeFor: "{apt} пәтердің коды",
+    cancelBtn: "Бронды жою",
+    cancelled: "{date} күнгі брон жойылды",
+
+    err: {
+      wrong_code: "Пәтер нөмірі немесе код қате",
+      day_taken: "Бұл күн бос емес ({apt} пәтер)",
+      month_taken: "{apt} пәтердің осы айда броны бар: {date}. Айына бір рет қана брондауға болады.",
+      race: "Бұл күнді жаңа ғана біреу брондады. Бетті жаңартыңыз.",
+      past_day: "Өткен күнді брондауға болмайды",
+      too_far: "{date} дейін ғана брондауға болады",
+      past_cancel: "Өткен бронды жоюға болмайды",
+      no_own_booking: "Бұл күні сіздің пәтеріңіздің броны жоқ",
+      no_booking: "Бұл күні брон жоқ",
+      locked: "Қате әрекет тым көп. {minutes} минуттан кейін қайталаңыз.",
+      invalid_apt: "Пәтер нөмірі қате",
+      invalid_date: "Күн қате",
+      invalid_month: "Ай қате",
+      wrong_password: "Құпиясөз қате",
+      admin_disabled: "Серверде әкімші құпиясөзі орнатылмаған (ADMIN_PASSWORD)",
+      empty_list: "Пәтерлер тізімі бос",
+      too_many: "Бір реттен {max} пәтерден артық емес",
+      bad_range: "Нөмірлер ауқымын тексеріңіз",
+      apt_not_found: "{apt} пәтер табылмады",
+      network: "Сервермен байланыс жоқ, қайталап көріңіз",
+    },
+
+    adminTitle: "Әкімші бөлімі",
+    backToCalendar: "← Тұрғындарға арналған күнтізбе",
+    logout: "Шығу",
+    passwordLabel: "Әкімші құпиясөзі",
+    login: "Кіру",
+    tabBookings: "Брондар",
+    tabApartments: "Пәтерлер мен кодтар",
+    adminCancel: "Жою",
+    noBookingsMonth: "Бұл айда брон жоқ",
+    confirmCancel: "{apt} пәтердің {date} күнгі бронын жою керек пе?",
+    cancelledShort: "Брон жойылды",
+    adminBookTitle: "Пәтер атынан брондау",
+    adminBookHint: "Тұрғын өзі брондай алмаса. Ережелер бірдей: күн бос, пәтердің осы айда броны жоқ.",
+    apartment: "Пәтер",
+    date: "Күні",
+    adminBooked: "Брондалды: {apt} пәтер, {date}",
+    aptCount: "Жүйедегі пәтерлер:",
+    showList: "Тізімді көрсету",
+    addTitle: "Пәтерлерді қосу және код беру",
+    modeRange: "Ауқыммен",
+    modeList: "Тізіммен",
+    from: "Нөмірден",
+    to: "Нөмірге дейін",
+    prefix: "Префикс (міндетті емес)",
+    prefixPh: "мысалы, 2-",
+    rangeHint: "Пәтер нөмірлері әр блокта қайталанса, блоктарды префикспен кезек-кезек қосыңыз: «1-», «2-»…",
+    listLabel: "Пәтер нөмірлері, әр жолға біреуден немесе үтір арқылы",
+    overwrite: "Бар пәтерлерге де жаңа код беру (ескі кодтар жұмыс істемей қалады)",
+    createCodes: "Код жасау",
+    confirmOverwrite: "Бұл пәтерлердің ескі кодтары жұмыс істемей қалады. Жалғастыру керек пе?",
+    oneTitle: "Бір пәтер",
+    oneHint: "Код жоғалса немесе бөтен адамға белгілі болса — жаңасын беріңіз, ескісі жұмыс істемей қалады.",
+    newCode: "Жаңа код",
+    delete: "Жою",
+    confirmDelete: "{apt} пәтерді және оның барлық брондарын жою керек пе?",
+    deleted: "{apt} пәтер жойылды",
+    oneCode: "{apt} пәтер:",
+    createdCount: "Жасалған кодтар: {n}",
+    skipped: "Өткізіп жіберілді (жүйеде бар): {n}. Оларға жаңа код беру үшін белгіні қойыңыз.",
+    andMore: "… тағы {n}",
+    codesOnce: "Кодтар тек қазір көрсетіледі — файлды сақтаңыз немесе карточкаларды басып шығарыңыз. Кейін тек жаңасын беруге болады.",
+    printSlips: "Карточкаларды басып шығару",
+    downloadCsv: "Кестені жүктеу (CSV)",
+    csvHeader: "Пәтер;Код",
+  },
+
+  en: {
+    confirmOk: "Yes, continue",
+    confirmNo: "Cancel",
+    langName: "Eng",
+    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    monthsGen: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    weekdaysShort: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+
+    title: "Event room",
+    complex: "ISMA residential complex",
+    hint: "Tap a free day to book it.",
+    rule1: "Whole-day booking",
+    rule2: "One booking per apartment per month",
+    rule3: "Current and next month",
+    legendFree: "Free",
+    legendTaken: "Booked",
+    legendToday: "Today",
+    free: "free",
+    aptShort: "apt {apt}",
+    bookingsOf: "Bookings · {month}",
+    noBookings: "No bookings yet",
+    prevMonth: "Previous month",
+    nextMonth: "Next month",
+    ariaFree: "{date}: free",
+    ariaTaken: "{date}: booked by apartment {apt}",
+    themeToggle: "Switch theme",
+    language: "Language",
+
+    bookTitle: "Book",
+    aptLabel: "Apartment number",
+    aptPh: "e.g. 45",
+    codeLabel: "Apartment code",
+    codePh: "6 characters",
+    codeHint: "The building admin gives one code per apartment.",
+    close: "Close",
+    bookBtn: "Book",
+    bookedOk: "Done! {date} is booked for apartment {apt}",
+    takenTitle: "Booked — apt {apt}",
+    yourBooking: "Is this your booking? Cancel it",
+    codeFor: "Code of apartment {apt}",
+    cancelBtn: "Cancel booking",
+    cancelled: "Booking for {date} cancelled",
+
+    err: {
+      wrong_code: "Wrong apartment number or code",
+      day_taken: "This day is already booked (apt {apt})",
+      month_taken: "Apartment {apt} already has a booking this month: {date}. One booking per month is allowed.",
+      race: "Someone has just booked this day. Please refresh the page.",
+      past_day: "You can't book a past day",
+      too_far: "Bookings are open until {date}",
+      past_cancel: "A past booking can't be cancelled",
+      no_own_booking: "Your apartment has no booking on this day",
+      no_booking: "There is no booking on this day",
+      locked: "Too many wrong attempts. Try again in {minutes} min.",
+      invalid_apt: "Invalid apartment number",
+      invalid_date: "Invalid date",
+      invalid_month: "Invalid month",
+      wrong_password: "Wrong password",
+      admin_disabled: "Admin password is not set on the server (ADMIN_PASSWORD)",
+      empty_list: "The apartment list is empty",
+      too_many: "No more than {max} apartments at once",
+      bad_range: "Check the number range",
+      apt_not_found: "Apartment {apt} not found",
+      network: "No connection to the server, please try again",
+    },
+
+    adminTitle: "Admin",
+    backToCalendar: "← Residents' calendar",
+    logout: "Log out",
+    passwordLabel: "Admin password",
+    login: "Log in",
+    tabBookings: "Bookings",
+    tabApartments: "Apartments & codes",
+    adminCancel: "Cancel",
+    noBookingsMonth: "No bookings this month",
+    confirmCancel: "Cancel the booking of apt {apt} on {date}?",
+    cancelledShort: "Booking cancelled",
+    adminBookTitle: "Book for an apartment",
+    adminBookHint: "If a resident can't do it themselves. Same rules: the day is free and the apartment has no booking this month.",
+    apartment: "Apartment",
+    date: "Date",
+    adminBooked: "Booked: apt {apt}, {date}",
+    aptCount: "Apartments in the system:",
+    showList: "Show list",
+    addTitle: "Add apartments and issue codes",
+    modeRange: "Range",
+    modeList: "List",
+    from: "From",
+    to: "To",
+    prefix: "Prefix (optional)",
+    prefixPh: "e.g. 2-",
+    rangeHint: "If apartment numbers repeat across blocks, add each block separately with a prefix: “1-”, “2-”…",
+    listLabel: "Apartment numbers, one per line or comma-separated",
+    overwrite: "Also issue new codes to existing apartments (old codes will stop working)",
+    createCodes: "Create codes",
+    confirmOverwrite: "The old codes of these apartments will stop working. Continue?",
+    oneTitle: "One apartment",
+    oneHint: "Code lost or leaked? Issue a new one — the old code stops working.",
+    newCode: "New code",
+    delete: "Delete",
+    confirmDelete: "Delete apartment {apt} and all its bookings?",
+    deleted: "Apartment {apt} deleted",
+    oneCode: "Apartment {apt}:",
+    createdCount: "Codes created: {n}",
+    skipped: "Skipped (already in the system): {n}. Tick the checkbox to issue them new codes.",
+    andMore: "… and {n} more",
+    codesOnce: "Codes are shown only now — save the file or print the cards. Later you can only issue new ones.",
+    printSlips: "Print cards",
+    downloadCsv: "Download table (CSV)",
+    csvHeader: "Apartment;Code",
+  },
+};
+
+export const LANGS = ["ru", "kk", "en"];
+
+function detectLang() {
+  try {
+    const saved = localStorage.getItem("lang");
+    if (LANGS.includes(saved)) return saved;
+  } catch {}
+  const nav = (navigator.language || "").toLowerCase();
+  if (nav.startsWith("kk")) return "kk";
+  if (nav.startsWith("en")) return "en";
+  return "ru";
+}
+
+let lang = detectLang();
+const listeners = [];
+
+export function getLang() { return lang; }
+
+export function setLang(next) {
+  if (!LANGS.includes(next) || next === lang) return;
+  lang = next;
+  try { localStorage.setItem("lang", next); } catch {}
+  applyStatic();
+  listeners.forEach((fn) => fn(lang));
+}
+
+export function onLangChange(fn) { listeners.push(fn); }
+
+function fill(str, params = {}) {
+  return str.replace(/\{(\w+)\}/g, (_, k) => (params[k] ?? `{${k}}`));
+}
+
+export function t(key, params) {
+  const v = DICT[lang][key] ?? DICT.ru[key] ?? key;
+  return typeof v === "string" ? fill(v, params) : v;
+}
+
+export function tErr(code, params = {}) {
+  const p = { ...params };
+  if (p.date) p.date = shortDate(p.date);
+  const msg = DICT[lang].err[code] ?? DICT.ru.err[code] ?? DICT[lang].err.network;
+  return fill(msg, p);
+}
+
+export function shortDate(date) {
+  const [y, m, d] = date.split("-");
+  return `${d}.${m}.${y}`;
+}
+
+export function applyStatic(root = document) {
+  document.documentElement.lang = lang;
+  root.querySelectorAll("[data-i18n]").forEach((n) => (n.textContent = t(n.dataset.i18n)));
+  root.querySelectorAll("[data-i18n-ph]").forEach((n) => (n.placeholder = t(n.dataset.i18nPh)));
+  root.querySelectorAll("[data-i18n-aria]").forEach((n) => {
+    n.setAttribute("aria-label", t(n.dataset.i18nAria));
+    n.title = t(n.dataset.i18nAria);
+  });
+  root.querySelectorAll("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+}

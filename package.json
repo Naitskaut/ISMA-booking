@@ -1,0 +1,16 @@
+{
+  "name": "zhk-booking",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Бронирование комнаты для мероприятий в ЖК",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "db:init:local": "wrangler d1 execute zhk-booking --local --file=schema.sql",
+    "db:init:remote": "wrangler d1 execute zhk-booking --remote --file=schema.sql",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.147.0"
+  }
+}

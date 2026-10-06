@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "isma-booking",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "zhk-booking",
+      "database_id": "6f4ba4d2-50d0-43c6-83f2-be7b2b2ea85c"
+    }
+  ],
+  "vars": {
+    // Часовой пояс Казахстана: UTC+5
+    "TZ_OFFSET_HOURS": "5",
+    // Сколько месяцев после текущего открыто для брони (1 = текущий + следующий)
+    "MONTHS_AHEAD": "1"
+  }
+  // Пароль админа задаётся секретом: `npx wrangler secret put ADMIN_PASSWORD`
+}

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Админка ISMA</title>
+  <meta name="theme-color" content="#206a75">
+  <script>try { var th = localStorage.getItem("theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23206a75'/><text x='50' y='70' font-size='60' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>I</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .tabs { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
+    .tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+    .row > div { flex: 1 1 140px; }
+    .radio { display: flex; gap: 16px; margin: 4px 0 8px; }
+    .radio label, .check { display: flex; align-items: center; gap: 6px; font-weight: 500; margin: 0; }
+    .check { margin-top: 12px; }
+    input[type="radio"], input[type="checkbox"] { accent-color: var(--accent); }
+    .result { margin-top: 16px; padding: 14px; border-radius: 12px; background: var(--accent-soft); }
+    .result strong.code { font-size: 22px; letter-spacing: .15em; color: var(--accent); }
+    .codes { columns: 3 140px; font-variant-numeric: tabular-nums; font-size: 14px; margin: 10px 0; }
+    .codes div { break-inside: avoid; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; max-height: 240px; overflow: auto; }
+    .chips span { background: var(--surface-2); border-radius: 6px; padding: 2px 8px; font-size: 13px; }
+    .muted { color: var(--muted); }
+    .hero .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .hero a { color: #fff; }
+    .hero .btn { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff; }
+
+    #print-area { display: none; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .wrap, dialog, .toast { display: none !important; }
+      #print-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+      .slip {
+        border: 1px dashed #999; padding: 10px 12px; font-size: 10.5px; line-height: 1.35;
+        break-inside: avoid; color: #000;
+      }
+      .slip .brand { font-weight: 800; letter-spacing: .15em; color: #206a75; }
+      .slip .apt { font-size: 14px; font-weight: 700; margin-top: 2px; }
+      .slip .code { font-size: 18px; font-weight: 700; letter-spacing: .15em; margin: 2px 0 4px; color: #206a75; }
+      @page { margin: 10mm; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="logo" href="/"><span class="logo-mark">I</span><span class="logo-text">ISMA</span></a>
+      <div class="controls">
+        <div class="seg" role="group" data-i18n-aria="language">
+          <button data-lang="ru">RU</button><button data-lang="kk">KZ</button><button data-lang="en">EN</button>
+        </div>
+        <button class="icon-btn" id="theme-toggle" data-i18n-aria="themeToggle">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="head">
+        <div>
+          <p class="complex" data-i18n="complex"></p>
+          <h1 data-i18n="adminTitle"></h1>
+          <p><a href="/" data-i18n="backToCalendar"></a></p>
+        </div>
+        <button class="btn small" id="logout" data-i18n="logout" hidden></button>
+      </div>
+    </header>
+
+    <!-- Вход -->
+    <section class="card" id="login-card">
+      <form id="login-form">
+        <label for="password" data-i18n="passwordLabel"></label>
+        <input type="password" id="password" autocomplete="current-password" required>
+        <div class="error" id="login-error" hidden></div>
+        <div class="actions"><button class="btn primary" type="submit" data-i18n="login"></button></div>
+      </form>
+    </section>
+
+    <div id="admin" hidden>
+      <div class="tabs" role="tablist">
+        <button class="btn" role="tab" data-tab="bookings" aria-selected="true" data-i18n="tabBookings"></button>
+        <button class="btn" role="tab" data-tab="apartments" aria-selected="false" data-i18n="tabApartments"></button>
+      </div>
+
+      <!-- Брони -->
+      <div data-panel="bookings">
+        <section class="card">
+          <div class="month-nav">
+            <button class="icon-btn" id="prev" data-i18n-aria="prevMonth">‹</button>
+            <h2 id="month-title"></h2>
+            <button class="icon-btn" id="next" data-i18n-aria="nextMonth">›</button>
+          </div>
+          <ul class="list" id="bookings"></ul>
+        </section>
+
+        <section class="card">
+          <h3 data-i18n="adminBookTitle"></h3>
+          <p class="hint" style="margin-top:-6px" data-i18n="adminBookHint"></p>
+          <form id="admin-book" class="row">
+            <div><label for="ab-apt" data-i18n="apartment"></label><input type="text" id="ab-apt" required></div>
+            <div><label for="ab-date" data-i18n="date"></label><input type="date" id="ab-date" required></div>
+            <div style="flex:0 0 auto"><button class="btn primary" type="submit" data-i18n="bookBtn"></button></div>
+          </form>
+          <div class="error" id="ab-error" hidden></div>
+        </section>
+      </div>
+
+      <!-- Квартиры -->
+      <div data-panel="apartments" hidden>
+        <section class="card">
+          <h3><span data-i18n="aptCount"></span> <span id="apt-count">…</span></h3>
+          <details><summary data-i18n="showList"></summary><div class="chips" id="apt-list"></div></details>
+        </section>
+
+        <section class="card">
+          <h3 data-i18n="addTitle"></h3>
+          <form id="add-form">
+            <div class="radio" role="radiogroup">
+              <label><input type="radio" name="mode" value="range" checked> <span data-i18n="modeRange"></span></label>
+              <label><input type="radio" name="mode" value="list"> <span data-i18n="modeList"></span></label>
+            </div>
+            <div id="mode-range" class="row">
+              <div><label for="r-from" data-i18n="from"></label><input type="number" id="r-from" min="1" value="1"></div>
+              <div><label for="r-to" data-i18n="to"></label><input type="number" id="r-to" min="1" value="503"></div>
+              <div><label for="r-prefix" data-i18n="prefix"></label><input type="text" id="r-prefix" data-i18n-ph="prefixPh"></div>
+            </div>
+            <p class="hint" id="range-hint" data-i18n="rangeHint"></p>
+            <div id="mode-list" hidden>
+              <label for="l-text" data-i18n="listLabel"></label>
+              <textarea id="l-text" placeholder="1&#10;2&#10;3А"></textarea>
+            </div>
+            <label class="check"><input type="checkbox" id="overwrite"> <span data-i18n="overwrite"></span></label>
+            <div class="error" id="add-error" hidden></div>
+            <div class="actions"><button class="btn primary" type="submit" data-i18n="createCodes"></button></div>
+          </form>
+          <div class="result" id="add-result" hidden></div>
+        </section>
+
+        <section class="card">
+          <h3 data-i18n="oneTitle"></h3>
+          <p class="hint" style="margin-top:-6px" data-i18n="oneHint"></p>
+          <form id="one-form" class="row">
+            <div><label for="one-apt" data-i18n="apartment"></label><input type="text" id="one-apt" required></div>
+            <div style="flex:0 0 auto" class="row">
+              <button class="btn primary" type="submit" data-action="regenerate" data-i18n="newCode"></button>
+              <button class="btn danger" type="submit" data-action="delete" data-i18n="delete"></button>
+            </div>
+          </form>
+          <div class="error" id="one-error" hidden></div>
+          <div class="result" id="one-result" hidden></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="print-area"></div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
